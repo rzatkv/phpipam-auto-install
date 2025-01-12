@@ -154,6 +154,7 @@ display_summary() {
     printf "==============================================\n"
     printf "| %-20s | %-25s |\n" "Parameter" "Value"
     printf "==============================================\n"
+    printf "| %-20s | %-25s |\n" "Script Installer Version" "1.0.8"
     printf "| %-20s | %-25s |\n" "OS and Version" "$OS $VERSION"
     printf "| %-20s | %-25s |\n" "Web Server" "$WEB_SERVER"
     printf "| %-20s | %-25s |\n" "Web Server Version" "${WEB_SERVER_VERSION:0:25}"
