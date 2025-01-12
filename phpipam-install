@@ -231,6 +231,7 @@ display_summary() {
     printf "| %-20s | %-25s |\n" "Server IP Address" "http://""$IP"
     printf "==============================================\n"
     printf "\nFor more details, visit the repository: https://github.com/rzatkv/phpipam-auto-install\n"
+    printf 
 }
 
 # Main script execution
