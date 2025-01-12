@@ -131,6 +131,19 @@ download_phpipam() {
     echo -e "${GREEN}phpIPAM downloaded and configured successfully.${NC}" >&3
 }
 
+# Function to configure BASE in config.php
+configure_base() {
+    echo -e "${YELLOW}Configuring BASE directive in config.php...${NC}" >&3
+
+    # Define the BASE path. Modify this if phpipam is not in the root directory of the web server.
+    BASE_PATH="/"
+
+    # Update the BASE directive in config.php
+    sudo sed -i "s|define('BASE', .*);|define('BASE', \"$BASE_PATH\");|" /var/www/phpipam/config.php
+
+    echo -e "${GREEN}BASE directive set to '$BASE_PATH' in config.php.${NC}" >&3
+}
+
 # Function to display summary
 display_summary() {
     IP=$(hostname -I | awk '{print $1}')
@@ -162,4 +175,5 @@ prompt_database_details
 install_prerequisites
 configure_mariadb
 download_phpipam
+configure_base
 display_summary
