@@ -121,7 +121,8 @@ clean_mysql_for_phpipam() {
                 EXECUTE stmt;
                 DEALLOCATE PREPARE stmt;
                 SET FOREIGN_KEY_CHECKS = 1;
-            "
+            " 
+            echo
 
             # Drop all non-system users
             sudo mysql -u root -p -e "
@@ -129,7 +130,7 @@ clean_mysql_for_phpipam() {
                 WHERE user NOT IN ('root', 'mysql.session', 'mysql.sys');
                 FLUSH PRIVILEGES;
             "
-
+            echo
             echo -e "${GREEN}All MySQL databases and users (except system defaults) have been cleaned.${NC}"
         else
             echo -e "${YELLOW}Skipping MySQL cleaning.${NC}"
@@ -174,6 +175,7 @@ download_phpipam() {
     sudo sed -i "s/'phpipampassword';/'$DB_PASS';/" /var/www/phpipam/config.php
     mysql -u root -p phpipam < /var/www/phpipam/db/SCHEMA.sql
     sudo mysql -e "DROP DATABASE phpipam;"
+    echo
     echo -e "${GREEN}phpIPAM downloaded and configured successfully.${NC}" >&3
 }
 
