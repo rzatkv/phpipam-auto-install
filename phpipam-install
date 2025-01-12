@@ -174,7 +174,6 @@ download_phpipam() {
     sudo sed -i "s/'phpipamuser';/'$DB_USER';/" /var/www/phpipam/config.php
     sudo sed -i "s/'phpipampassword';/'$DB_PASS';/" /var/www/phpipam/config.php
     mysql -u root -p phpipam < /var/www/phpipam/db/SCHEMA.sql
-    sudo mysql -e "DROP DATABASE phpipam;"
     echo
     echo -e "${GREEN}phpIPAM downloaded and configured successfully.${NC}" >&3
 }
