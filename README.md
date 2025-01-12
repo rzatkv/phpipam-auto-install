@@ -35,7 +35,8 @@ This repository contains an automated installation script for setting up phpIPAM
 4. Follow the prompts to complete the installation.
 
 ## Notes
-- The script defaults to `phpipam` for the database name, `phpipam_user` for the database user, and `phpipam_pass` for the database password if no custom values are provided during the setup.
+- default admin user details : Username: Admin - Password: ipamadmin for login to phpipam.
+- The script defaults to `phpipam` for the database name, `phpipam` for the database user, and `phpipamadmin` for the database password if no custom values are provided during the setup.
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
