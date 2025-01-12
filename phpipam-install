@@ -218,9 +218,9 @@ display_summary() {
 detect_os
 prompt_cleanup
 prompt_web_server
+clean_mysql_for_phpipam
 prompt_database_details
 install_prerequisites
-clean_mysql_for_phpipam
 configure_mariadb
 download_phpipam
 configure_base
