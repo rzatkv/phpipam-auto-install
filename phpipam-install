@@ -105,6 +105,11 @@ configure_mariadb() {
     sudo mysql -e "CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';"
     sudo mysql -e "GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'localhost';"
     sudo mysql -e "FLUSH PRIVILEGES;"
+    sudo mysql -e "SET FOREIGN_KEY_CHECKS = 0;"
+    sudo mysql -e "DROP DATABASE phpipam;"
+    sudo mysql -e "CREATE DATABASE phpipam;"
+    sudo mysql -e "SET FOREIGN_KEY_CHECKS = 1;"
+
     echo -e "${GREEN}MariaDB configured successfully.${NC}" >&3
 }
 
@@ -122,6 +127,7 @@ download_phpipam() {
     sudo cp /var/www/phpipam/config.dist.php /var/www/phpipam/config.php
     sudo sed -i "s/'phpipamuser';/'$DB_USER';/" /var/www/phpipam/config.php
     sudo sed -i "s/'phpipampassword';/'$DB_PASS';/" /var/www/phpipam/config.php
+    mysql -u root -p phpipam < /var/www/phpipam/db/SCHEMA.sql
     echo -e "${GREEN}phpIPAM downloaded and configured successfully.${NC}" >&3
 }
 
