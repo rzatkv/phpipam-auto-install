@@ -63,12 +63,12 @@ prompt_database_details() {
     read -p "Enter the database name (default: phpipam): " DB_NAME_INPUT >&3
     DB_NAME=${DB_NAME_INPUT:-phpipam}
 
-    read -p "Enter the database user (default: phpipam_user): " DB_USER_INPUT >&3
-    DB_USER=${DB_USER_INPUT:-phpipam_user}
+    read -p "Enter the database user (default: phpipam): " DB_USER_INPUT >&3
+    DB_USER=${DB_USER_INPUT:-phpipam}
 
-    read -sp "Enter the database password (default: phpipam_pass): " DB_PASS_INPUT >&3
+    read -sp "Enter the database password (default: phpipamadmin): " DB_PASS_INPUT >&3
     echo "" >&3
-    DB_PASS=${DB_PASS_INPUT:-phpipam_pass}
+    DB_PASS=${DB_PASS_INPUT:-phpipamadmin}
 
     echo -e "${GREEN}Database details set: Name=$DB_NAME, User=$DB_USER.${NC}" >&3
 }
