@@ -95,6 +95,51 @@ install_prerequisites() {
     fi
 }
 
+# Function to check MySQL and clean databases
+clean_mysql_for_phpipam() {
+    echo -e "${YELLOW}Checking for MySQL installation...${NC}"
+
+    # Check if MySQL is installed
+    if command -v mysql >/dev/null 2>&1; then
+        echo -e "${GREEN}MySQL is installed on this system.${NC}"
+
+        # Prompt user for confirmation
+        read -p "Do you want to clean all MySQL users, tables, and databases for a fresh phpIPAM installation? (y/n): " CONFIRM
+        if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
+            echo -e "${YELLOW}Cleaning all MySQL data...${NC}"
+
+            # Login to MySQL and drop all databases except system ones
+            sudo mysql -u root -p -e "
+                SET FOREIGN_KEY_CHECKS = 0;
+                SET GROUP_CONCAT_MAX_LEN = 32768;
+                SET @databases = NULL;
+                SELECT GROUP_CONCAT(schema_name) INTO @databases
+                FROM information_schema.schemata
+                WHERE schema_name NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');
+                SET @query = CONCAT('DROP DATABASE ', @databases);
+                PREPARE stmt FROM @query;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                SET FOREIGN_KEY_CHECKS = 1;
+            "
+
+            # Drop all non-system users
+            sudo mysql -u root -p -e "
+                DELETE FROM mysql.user
+                WHERE user NOT IN ('root', 'mysql.session', 'mysql.sys');
+                FLUSH PRIVILEGES;
+            "
+
+            echo -e "${GREEN}All MySQL databases and users (except system defaults) have been cleaned.${NC}"
+        else
+            echo -e "${YELLOW}Skipping MySQL cleaning.${NC}"
+        fi
+    else
+        echo -e "${RED}MySQL is not installed on this system.${NC}"
+    fi
+}
+
+
 # Function to configure MariaDB
 configure_mariadb() {
     echo -e "${YELLOW}Configuring MariaDB...${NC}" >&3
@@ -128,6 +173,7 @@ download_phpipam() {
     sudo sed -i "s/'phpipamuser';/'$DB_USER';/" /var/www/phpipam/config.php
     sudo sed -i "s/'phpipampassword';/'$DB_PASS';/" /var/www/phpipam/config.php
     mysql -u root -p phpipam < /var/www/phpipam/db/SCHEMA.sql
+    sudo mysql -e "DROP DATABASE phpipam;"
     echo -e "${GREEN}phpIPAM downloaded and configured successfully.${NC}" >&3
 }
 
@@ -174,6 +220,7 @@ prompt_cleanup
 prompt_web_server
 prompt_database_details
 install_prerequisites
+clean_mysql_for_phpipam
 configure_mariadb
 download_phpipam
 configure_base
