@@ -191,6 +191,24 @@ configure_base() {
     echo -e "${GREEN}BASE directive set to '$BASE_PATH' in config.php.${NC}" >&3
 }
 
+disable_phpipam_installer() {
+    echo -e "${YELLOW}Disabling phpIPAM installation scripts...${NC}" >&3
+
+    # Path to the config.php file
+    CONFIG_FILE="/var/www/phpipam/config.php"
+
+    # Ensure the config file exists before attempting to modify it
+    if [[ -f "$CONFIG_FILE" ]]; then
+        # Update $disable_installer to true
+        sudo sed -i "s/\$disable_installer *= *false;/\$disable_installer = true;/" "$CONFIG_FILE"
+        echo -e "${GREEN}Installation scripts have been disabled in config.php.${NC}" >&3
+    else
+        echo -e "${RED}Error: config.php file not found at $CONFIG_FILE.${NC}" >&3
+        exit 1
+    fi
+}
+
+
 # Function to display summary
 display_summary() {
     IP=$(hostname -I | awk '{print $1}')
@@ -225,4 +243,5 @@ install_prerequisites
 configure_mariadb
 download_phpipam
 configure_base
+disable_phpipam_installer
 display_summary
