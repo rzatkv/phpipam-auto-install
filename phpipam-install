@@ -208,6 +208,78 @@ disable_phpipam_installer() {
     fi
 }
 
+configure_web_server() {
+    echo -e "${YELLOW}Configuring web server for phpIPAM...${NC}" >&3
+
+    if [[ "$WEB_SERVER_CHOICE" == "apache" ]]; then
+        # Apache Configuration
+        echo -e "${YELLOW}Setting up Apache configuration...${NC}" >&3
+
+        # Create a virtual host configuration for phpIPAM
+        sudo tee /etc/apache2/sites-available/phpipam.conf > /dev/null <<EOL
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    DocumentRoot /var/www/phpipam
+    ServerName phpipam.local
+
+    <Directory /var/www/phpipam>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog \${APACHE_LOG_DIR}/phpipam_error.log
+    CustomLog \${APACHE_LOG_DIR}/phpipam_access.log combined
+</VirtualHost>
+EOL
+
+        # Enable site and required modules
+        sudo a2ensite phpipam
+        sudo a2enmod rewrite
+        sudo systemctl restart apache2
+        echo -e "${GREEN}Apache configured successfully for phpIPAM.${NC}" >&3
+
+    elif [[ "$WEB_SERVER_CHOICE" == "nginx" ]]; then
+        # Nginx Configuration
+        echo -e "${YELLOW}Setting up Nginx configuration...${NC}" >&3
+
+        # Create a server block configuration for phpIPAM
+        sudo tee /etc/nginx/sites-available/phpipam > /dev/null <<EOL
+server {
+    listen 80;
+    server_name phpipam.local;
+
+    root /var/www/phpipam;
+    index index.php index.html;
+
+    location / {
+        try_files \$uri \$uri/ /index.php;
+    }
+
+    location ~ \\.php\$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+EOL
+
+        # Enable site and restart Nginx
+        sudo ln -s /etc/nginx/sites-available/phpipam /etc/nginx/sites-enabled/
+        sudo systemctl restart nginx
+        echo -e "${GREEN}Nginx configured successfully for phpIPAM.${NC}" >&3
+    else
+        echo -e "${RED}No valid web server selected. Please choose Apache or Nginx.${NC}" >&3
+        exit 1
+    fi
+}
+
+
 
 # Function to display summary
 display_summary() {
@@ -245,4 +317,5 @@ configure_mariadb
 download_phpipam
 configure_base
 disable_phpipam_installer
+configure_web_server
 display_summary
