@@ -211,7 +211,7 @@ disable_phpipam_installer() {
 configure_web_server() {
     echo -e "${YELLOW}Configuring web server for phpIPAM...${NC}" >&3
 
-    if [[ "$WEB_SERVER_CHOICE" == "apache" ]]; then
+    if [[ "$WEB_SERVER" == "apache" ]]; then
         # Apache Configuration
         echo -e "${YELLOW}Setting up Apache configuration...${NC}" >&3
 
@@ -239,7 +239,7 @@ EOL
         sudo systemctl restart apache2
         echo -e "${GREEN}Apache configured successfully for phpIPAM.${NC}" >&3
 
-    elif [[ "$WEB_SERVER_CHOICE" == "nginx" ]]; then
+    elif [[ "$WEB_SERVER" == "nginx" ]]; then
         # Nginx Configuration
         echo -e "${YELLOW}Setting up Nginx configuration...${NC}" >&3
 
